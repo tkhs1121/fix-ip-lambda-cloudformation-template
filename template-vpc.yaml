@@ -6,10 +6,6 @@ Parameters:
     Type: String
     Default: 10.0.0.0/16
     Description: VPC CIDR block.
-  VPCSubnet1Zone:
-    Type: AWS::EC2::AvailabilityZone::Name
-    Default: ap-northeast-1c
-    Description: 1st VPC Subnet zone.
   VPCSubnet1PublicCidr:
     Type: String
     Default: 10.0.0.0/24
@@ -22,7 +18,7 @@ Resources:
   AdditionalPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties: 
-      Description:Fix IP Lambda Lambda policy
+      Description: Fix IP Lambda Lambda policy
       PolicyDocument: 
         Version: '2012-10-17'
         Statement: 
@@ -51,8 +47,8 @@ Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription:Fix IP Lambda VPC attached security group.
-      GroupName: ${AWS::StackName}-lambda-sg
+      GroupDescription: Fix IP Lambda VPC attached security group.
+      GroupName: !Sub ${AWS::StackName}-lambda-sg
       SecurityGroupEgress: 
         - CidrIp: 0.0.0.0/0
           Description: Allow Http access v4
@@ -78,7 +74,7 @@ Resources:
         Ref: VPC
       Tags:
         - Key: Name
-          value: fix IP Lambda SG
+          Value: fix IP Lambda SG
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -87,7 +83,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          value: fix IP Lambda IG
+          Value: fix IP Lambda IG
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -102,14 +98,16 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: 
-        Fn::Sub: ${VPCSubnet1Zone}
+        Fn::Select: 
+          - 0
+          - Fn::GetAZs: ""
       CidrBlock: 
         Fn::Sub: ${VPCSubnet1PublicCidr}
       VpcId: 
         Ref: VPC
       Tags:
         - Key: Name
-          value: fix IP Lambda Public Subnet 1
+          Value: fix IP Lambda Public Subnet 1
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -117,14 +115,16 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: 
-        Fn::Sub: ${VPCSubnet1Zone}
+        Fn::Select: 
+          - 0
+          - Fn::GetAZs: ""
       CidrBlock: 
         Fn::Sub: ${VPCSubnet1PrivateCidr}
       VpcId: 
         Ref: VPC
       Tags:
         - Key: Name
-          value: fix IP Lambda Private Subnet 1
+          Value: fix IP Lambda Private Subnet 1
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -134,7 +134,7 @@ Resources:
       Domain: vpc
       Tags:
         - Key: Name
-          value: fix IP Lambda EIP
+          Value: fix IP Lambda EIP
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -148,7 +148,7 @@ Resources:
         Ref: PublicSubnet1
       Tags:
         - Key: Name
-          value: fix IP Lambda Natgateway 1
+          Value: fix IP Lambda Natgateway 1
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -159,7 +159,7 @@ Resources:
         Ref: VPC
       Tags:
         - Key: Name
-          value: fix IP Lambda Public Route Table 1
+          Value: fix IP Lambda Public Route Table 1
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}
@@ -180,7 +180,7 @@ Resources:
         Ref: VPC
       Tags:
         - Key: Name
-          value: fix IP Lambda Private Route Table 1
+          Value: fix IP Lambda Private Route Table 1
         - Key: CloudFormation
           Value: 
             Fn::Sub: ${AWS::StackName}

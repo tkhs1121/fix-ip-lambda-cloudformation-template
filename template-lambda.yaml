@@ -4,7 +4,7 @@ Description: Fix IP Lambda
   
 Parameters:
   URL:
-    Type: string
+    Type: String
     Default: "https://example.com"
   FixIPEnabled:
     Type: String
@@ -15,6 +15,7 @@ Parameters:
 
 Conditions:
   IsFixIPEnabled: !Equals [ !Ref FixIPEnabled, "true"]
+  IsVPCEnabled: !Equals [ !Ref FixIPEnabled, "true"]
 
 Resources:
   Function:
@@ -22,7 +23,9 @@ Resources:
     Properties:
       FunctionName: fix-ip-lambda
       Handler: bootstrap
-      Runtime: provided.al2
+      Runtime: provided.al2023
+      Architectures:
+        - arm64
       CodeUri: .
       Timeout: 30
       Policies:
@@ -44,8 +47,8 @@ Resources:
       VpcConfig:
         !If
           - IsVPCEnabled
-          - SecurityGroupIds: [!ImportValue FixIPLambda--SecurityGroup]
-            SubnetIds: [!ImportValue FixIPLambda--PrivateSubnet1]
+          - SecurityGroupIds: [!ImportValue FixIPLambda-SecurityGroup] 
+            SubnetIds: [!ImportValue FixIPLambda-PrivateSubnet1]
           - !Ref AWS::NoValue
     Metadata:
-      BuildMethod: go1.x
+      BuildMethod: makefile
